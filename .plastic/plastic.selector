@@ -1,0 +1,3 @@
+repository "PacMan Clone/PacManRepo@4674095282385@cloud"
+  path "/"
+    smartbranch "/main/jijon"
