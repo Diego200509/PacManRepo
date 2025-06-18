@@ -35,7 +35,9 @@ public class SQLitePlayerDatabase : IDatabase<PlayerEntity>
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                         nombre TEXT UNIQUE NOT NULL,
                         max_score INTEGER,
-                        last_score INTEGER
+                        last_score INTEGER,
+                        max_level INTEGER,
+                        last_level INTEGER
                     );";
                 command.ExecuteNonQuery();
             }
@@ -49,11 +51,13 @@ public class SQLitePlayerDatabase : IDatabase<PlayerEntity>
             connection.Open();
             using (var command = connection.CreateCommand())
             {
-                command.CommandText = @"INSERT INTO players (nombre, max_score, last_score)
-                                        VALUES (@nombre, @max_score, @last_score);";
+                command.CommandText = @"INSERT INTO players (nombre, max_score, last_score, max_level, last_level)
+                                        VALUES (@nombre, @max_score, @last_score, @max_level, @last_level);";
                 command.Parameters.AddWithValue("@nombre", element.Nombre);
                 command.Parameters.AddWithValue("@max_score", element.MaxScore);
                 command.Parameters.AddWithValue("@last_score", element.LastScore);
+                command.Parameters.AddWithValue("@max_level", element.MaxLevel);
+                command.Parameters.AddWithValue("@last_level", element.LastLevel);
                 command.ExecuteNonQuery();
             }
         }
@@ -67,7 +71,7 @@ public class SQLitePlayerDatabase : IDatabase<PlayerEntity>
             connection.Open();
             using (var command = connection.CreateCommand())
             {
-                command.CommandText = @"SELECT nombre, max_score, last_score FROM players WHERE nombre = @nombre;";
+                command.CommandText = @"SELECT nombre, max_score, last_score, max_level, last_level FROM players WHERE nombre = @nombre;";
                 command.Parameters.AddWithValue("@nombre", nombre);
 
                 using (IDataReader reader = command.ExecuteReader())
@@ -77,7 +81,9 @@ public class SQLitePlayerDatabase : IDatabase<PlayerEntity>
                         string nombreDb = reader.GetString(0);
                         int maxScore = reader.GetInt32(1);
                         int lastScore = reader.GetInt32(2);
-                        return new PlayerEntity(nombreDb, maxScore, lastScore);
+                        int maxLevel = reader.GetInt32(3);
+                        int lastLevel = reader.GetInt32(4);
+                        return new PlayerEntity(nombreDb, maxScore, lastScore, maxLevel, lastLevel);
                     }
                 }
             }
@@ -93,8 +99,13 @@ public class SQLitePlayerDatabase : IDatabase<PlayerEntity>
             using (var command = connection.CreateCommand())
             {
                 command.CommandText = @"UPDATE players
-                                        SET max_score = @max_score, last_score = @last_score
+                                        SET max_score = @max_score, 
+                                            last_score = @last_score,
+                                            max_level = @max_level,
+                                            last_level = @last_level
                                         WHERE nombre = @nombre;";
+                command.Parameters.AddWithValue("@max_level", element.MaxLevel);
+                command.Parameters.AddWithValue("@last_level", element.LastLevel);
                 command.Parameters.AddWithValue("@max_score", element.MaxScore);
                 command.Parameters.AddWithValue("@last_score", element.LastScore);
                 command.Parameters.AddWithValue("@nombre", element.Nombre);
