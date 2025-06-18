@@ -1,6 +1,6 @@
 public class RegisterPlayer : ISetPlayerSession
 {
-    public IDatabase<PlayerEntity> Database { get; set; }
+    public readonly IDatabase<PlayerEntity> Database;
     public RegisterPlayer(IDatabase<PlayerEntity> database)
     {
         Database = database;

@@ -1,6 +1,6 @@
 public class LogoutPlayer : IDestroyPlayerSession
 {
-    public IDatabase<PlayerEntity> Database { get; set; }
+    public readonly IDatabase<PlayerEntity> Database;
     public LogoutPlayer(IDatabase<PlayerEntity> database)
     {
         Database = database;
