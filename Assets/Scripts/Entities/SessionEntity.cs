@@ -20,8 +20,9 @@ public class SessionEntity
     public static SessionEntity GetInstance()
     {
         if (_instance == null)
+        {
             throw new System.Exception("Sesión no iniciada. VENGO DE SESSIONENTITY");
-
+        }
         return _instance;
     }
     public static void DestroySession()

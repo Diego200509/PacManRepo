@@ -1,18 +1,46 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+using Zenject;
 
 public class LogoutAction : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    [SerializeField] private Button salirButton;
+
+    private LogoutPlayer _logoutPlayer;
+    [Inject]
+    public void Construct(
+        LogoutPlayer logoutPlayer
+    )
     {
-        
+        _logoutPlayer = logoutPlayer;
+    }
+    // Start is called before the first frame update
+    private void Start()
+    {
+        salirButton.onClick.AddListener(OnSalirClick);
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OnSalirClick()
     {
-        
+        try
+        {
+            PlayerEntity player = SessionEntity.GetInstance().CurrentPlayer;
+            if (player == null)
+            {
+                Debug.LogError("Skibidi: No se ha iniciado sesion");
+            }
+            /// POR HACER. CAMBIAR LAS COSAS PARA OBTENER LA PUNTUACION DEL JUEGO Y EL NIVEL PARA PASARLO AL PLAYER
+            player.UpdateScore(15151);
+            Debug.Log($"Sigma: {player.Nombre} --- {player.LastScore}");
+            _logoutPlayer.DestroySession();
+            SceneManager.LoadScene("Login");
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogError($"Error al hacer algo. ESTOY EN LOGOUTACTION {ex.Message}");
+        }
     }
 }
