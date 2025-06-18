@@ -6,16 +6,23 @@ using Zenject;
 public class PacManController : MonoBehaviour
 {
     private IMovePacManUseCase _moveUseCase;
+    private IConsumePelletUseCase _consumePellet; // NUEVO
     private PacManEntity _entity;
     private PacManView _view;
 
     private bool _isReady = false;
 
-    public void Initialize(IMovePacManUseCase moveUseCase, PacManEntity entity, PacManView view)
+    // NUEVO: se añade consumePellet al método de inicialización
+    public void Initialize(
+        IMovePacManUseCase moveUseCase,
+        PacManEntity entity,
+        PacManView view,
+        IConsumePelletUseCase consumePellet)
     {
         _moveUseCase = moveUseCase;
         _entity = entity;
         _view = view;
+        _consumePellet = consumePellet;
         _isReady = true;
     }
 
@@ -29,17 +36,22 @@ public class PacManController : MonoBehaviour
             Input.GetAxisRaw("Vertical")
         );
 
-        // 2) Ejecutar lógica
+        // 2) Ejecutar lógica de movimiento
         _moveUseCase.Execute(_entity);
 
-        // 3) Actualizar vista
+        // 3) Consumir pellet si está en uno
+        _consumePellet.Execute(_entity.Position); // NUEVO
+
+        // 4) Actualizar posición visual
         transform.localPosition = _entity.Position;
 
+        // 5) Animación de boca
         if (_entity.Direction == Vector2.zero)
             _view.ShowIdle();
         else
             _view.PlayChomp();
 
+        // 6) Dirección visual
         UpdateOrientation();
     }
 

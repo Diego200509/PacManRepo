@@ -12,6 +12,8 @@ public class PacManEntity
     public Node TargetNode { get; set; }
     public float Speed { get; set; }
     public bool CanMove { get; set; }
+    public int Level { get; private set; } = 1;
+
 
     public PacManEntity(Node startNode, float startSpeed)
     {
@@ -23,5 +25,11 @@ public class PacManEntity
         NextDirection = Vector2.left;
         Speed = startSpeed;
         CanMove = true;
+    }
+
+    public void SetLevel(int level)
+    {
+        Level = level;
+        Speed = Mathf.Clamp(5f + level, 5f, 10f); 
     }
 }

@@ -6,6 +6,7 @@ using Zenject;
 public class GameInitializer : MonoBehaviour
 {
     [Inject] private IMovePacManUseCase _moveUseCase;
+    [Inject] private IConsumePelletUseCase _consumePelletUseCase; 
     [Inject] private GameBoardView _boardView;
     [Inject] private PacManView _pacManView;
     [Inject] private DiContainer _container;
@@ -47,7 +48,7 @@ public class GameInitializer : MonoBehaviour
         var controller = _pacManView.GetComponent<PacManController>();
         if (controller != null)
         {
-            controller.Initialize(_moveUseCase, entity, _pacManView);
+            controller.Initialize(_moveUseCase, entity, _pacManView, _consumePelletUseCase);
             Debug.Log("PacManController inyectado manualmente con éxito.");
         }
         else

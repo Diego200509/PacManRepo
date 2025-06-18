@@ -117,4 +117,13 @@ public class GhostView : MonoBehaviour
         else if (dir == Vector2.right) _sprite.sprite = eyesRight;
         else _sprite.sprite = eyesLeft;
     }
+
+    /// <summary>
+    /// Entra en modo frightened (fantasma azul).
+    /// </summary>
+    public void StartFrightenedMode()
+    {
+        SetFrightened(false); 
+    }
+
 }

@@ -28,5 +28,14 @@ public class DependencyInjector : MonoInstaller
         Container.Bind<IMovePacManUseCase>()
                  .To<MovePacManUseCase>()
                  .AsTransient();
+
+        // Caso de uso para consumir pellets
+        Container.Bind<IConsumePelletUseCase>()
+                 .To<ConsumePelletUseCase>()
+                 .AsTransient()
+                 .WithArguments(
+                    Container.Resolve<IGameBoardGateway>(),
+                    Container.Resolve<PacManView>()
+                 );
     }
 }

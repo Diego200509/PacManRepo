@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
 [RequireComponent(typeof(AudioSource), typeof(Animator), typeof(SpriteRenderer))]
 public class PacManView : MonoBehaviour
 {
@@ -18,23 +19,18 @@ public class PacManView : MonoBehaviour
     [Header("Movement (speed config only)")]
     public float speed = 6f;
 
-    // --- Añadido para que GhostController pueda saber hacia dónde mira Pac-Man
     [HideInInspector]
     public Vector2 orientation = Vector2.left;
 
-    // --- Mantiene si puede moverse o no (usado por GameBoardView) ---
     [HideInInspector]
     public bool canMove = true;
 
-    // componente cacheado
     AudioSource _audio;
     Animator _anim;
     SpriteRenderer _sprite;
 
-    // guardamos la posición inicial para MoveToStartingPosition()
     Vector3 _startLocalPos;
 
-    // para alternar chomp1/chomp2
     bool _playedChomp1 = false;
 
     void Awake()
@@ -76,8 +72,6 @@ public class PacManView : MonoBehaviour
         _anim.enabled = true;
     }
 
-    // --- Estos métodos los invoca tu GameBoardView directamente: ---
-
     /// <summary>
     /// Teletransporta a la posición inicial y pasa a idle.
     /// </summary>
@@ -89,11 +83,10 @@ public class PacManView : MonoBehaviour
     }
 
     /// <summary>
-    /// Ajusta la “velocidad” (solo para que tú veas el valor en el Inspector)
+    /// Ajusta la “velocidad” (solo visual para el Inspector)
     /// </summary>
     public void SetDifficultyForLevel(int level)
     {
-        // tal como lo hacías antes
         switch (level)
         {
             case 1: speed = 6f; break;
@@ -116,7 +109,6 @@ public class PacManView : MonoBehaviour
         ShowIdle();
     }
 
-    // --- Opcional: si quieres centralizar la orientación de la vista aquí ---
     /// <summary>
     /// Llama desde tu PacManController tras mover la entidad,
     /// para reflejar la dirección en la vista.
@@ -137,5 +129,17 @@ public class PacManView : MonoBehaviour
             transform.localScale = Vector3.one;
             transform.localRotation = Quaternion.Euler(0, 0, 270);
         }
+    }
+
+    //Para obtener la velocidad actual desde el View 
+    public float GetCurrentSpeed()
+    {
+        return speed;
+    }
+
+    //Llamado por el caso de uso al comer pellet
+    public void OnPelletConsumed()
+    {
+        PlayChomp();
     }
 }
