@@ -56,20 +56,25 @@ public class PacManController : MonoBehaviour
         // 2) Ejecutar lógica de movimiento
         _moveUseCase.Execute(_entity);
 
-        // 3) Consumir pellet
-        _consumePellet.Execute(_entity.Position);
+        // 3) Consumir pellet y reproducir sonido solo si realmente se consumió
+        bool atePellet = _consumePellet.Execute(_entity.Position);
 
         // 4) Actualizar posición visual SOLO si se está moviendo
         if (transform.position != (Vector3)_entity.Position)
         {
             transform.position = _entity.Position;
             Debug.Log($"Posición visual actualizada: {transform.position}");
-            _view.PlayChomp();
+
+            if (atePellet)
+                _view.PlayChomp();
+            else
+                _view.ShowMoving();
         }
         else
         {
             _view.ShowIdle();
         }
+
 
         // 5) Orientación
         UpdateOrientation();

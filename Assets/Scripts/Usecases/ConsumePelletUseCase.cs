@@ -15,16 +15,16 @@ public class ConsumePelletUseCase : IConsumePelletUseCase
         this.view = view;
     }
 
-    public void Execute(Vector2 position)
+    public bool Execute(Vector2 position)
     {
         int x = Mathf.FloorToInt(position.x + 0.5f);
         int y = Mathf.FloorToInt(position.y + 0.5f);
 
         GameObject tileObj = board.GetTileAt(x, y);
-        if (tileObj == null) return;
+        if (tileObj == null) return false;
 
         Tile tile = tileObj.GetComponent<Tile>();
-        if (tile == null) return;
+        if (tile == null) return false;
 
         bool consumed = false;
 
@@ -34,7 +34,6 @@ public class ConsumePelletUseCase : IConsumePelletUseCase
             {
                 tile.didConsumePlayerOne = true;
                 GameMenu.playerOnePelletsConsumed++;
-
                 GameBoardView.playerOneScore += tile.isSuperPellet ? 50 : 10;
                 consumed = true;
             }
@@ -45,7 +44,6 @@ public class ConsumePelletUseCase : IConsumePelletUseCase
             {
                 tile.didConsumePlayerTwo = true;
                 GameMenu.playerTwoPelletsConsumed++;
-
                 GameBoardView.playerTwoScore += tile.isSuperPellet ? 50 : 10;
                 consumed = true;
             }
@@ -54,7 +52,7 @@ public class ConsumePelletUseCase : IConsumePelletUseCase
         if (consumed)
         {
             tileObj.GetComponent<SpriteRenderer>().enabled = false;
-            view.OnPelletConsumed();
+            view.OnPelletConsumed(); // Animación visual u otros efectos
 
             if (tile.isSuperPellet)
             {
@@ -65,5 +63,7 @@ public class ConsumePelletUseCase : IConsumePelletUseCase
                 }
             }
         }
+
+        return consumed;
     }
 }

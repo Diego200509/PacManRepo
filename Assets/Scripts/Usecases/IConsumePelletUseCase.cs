@@ -4,5 +4,5 @@ using UnityEngine;
 
 public interface IConsumePelletUseCase
 {
-    void Execute(Vector2 position);
+    bool Execute(Vector2 position);
 }

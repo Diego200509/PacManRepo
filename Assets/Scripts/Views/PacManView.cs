@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -85,6 +86,19 @@ public class PacManView : MonoBehaviour
         transform.localPosition = _startLocalPos;
         ShowIdle();
         canMove = false;
+    }
+
+    public void ShowMoving()
+    {
+        if (_anim.runtimeAnimatorController != chompAnimation)
+        {
+            _anim.runtimeAnimatorController = chompAnimation;
+        }
+
+        if (!_anim.enabled)
+        {
+            _anim.enabled = true;
+        }
     }
 
     /// <summary>

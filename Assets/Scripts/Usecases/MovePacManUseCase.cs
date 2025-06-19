@@ -90,17 +90,17 @@ public class MovePacManUseCase : IMovePacManUseCase
             }
         }
 
-        // 5. Si no tiene TargetNode, intenta default
-        if (pacman.TargetNode == null && pacman.CurrentNode != null)
+        // 5. Si no tiene TargetNode, intenta según NextDirection (si está definida)
+        if (pacman.TargetNode == null && pacman.CurrentNode != null && pacman.NextDirection != Vector2.zero)
         {
-            var fallback = CanMove(pacman.CurrentNode, Vector2.left);
+            var fallback = CanMove(pacman.CurrentNode, pacman.NextDirection);
             if (fallback != null)
             {
                 pacman.TargetNode = fallback;
                 pacman.PreviousNode = pacman.CurrentNode;
                 pacman.CurrentNode = null;
-                pacman.Direction = Vector2.left;
-                Debug.Log("Forzando movimiento hacia la izquierda.");
+                pacman.Direction = pacman.NextDirection;
+                Debug.Log("Movimiento inicial hacia la dirección seleccionada.");
             }
         }
     }
