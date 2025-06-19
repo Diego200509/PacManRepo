@@ -9,18 +9,13 @@ public class LoginAction : MonoBehaviour
     [SerializeField] private Button ingresarButton;
 
     private IDatabase<PlayerEntity> _database;
-    private LoginPlayer _loginUseCase;
-    private RegisterPlayer _registerUseCase;
-
+    private IPlayerSessionProvider _strategyProvider;
     [Inject]
     public void Construct(
-        IDatabase<PlayerEntity> database,
-        LoginPlayer loginUseCase,
-        RegisterPlayer registerUseCase)
+        IPlayerSessionProvider provider
+    )
     {
-        _database = database;
-        _loginUseCase = loginUseCase;
-        _registerUseCase = registerUseCase;
+        _strategyProvider = provider;
     }
 
     private void Start()
@@ -40,19 +35,8 @@ public class LoginAction : MonoBehaviour
 
         try
         {
-            var jugadorExistente = _database.FindByName(nombre);
-
-            if (jugadorExistente != null)
-            {
-                _loginUseCase.SetSession(nombre);
-                Debug.Log($"✅ Bienvenido nuevamente, {nombre}.");
-            }
-            else
-            {
-                _registerUseCase.SetSession(nombre);
-                Debug.Log($"🆕 Usuario {nombre} creado correctamente.");
-            }
-
+            ISetPlayerSession setPlayer = _strategyProvider.GetPlayerSession(nombre);
+            setPlayer.SetSession(nombre);
             SceneManager.LoadScene("Level1");
         }
         catch (System.Exception ex)

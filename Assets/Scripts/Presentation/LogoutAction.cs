@@ -32,9 +32,6 @@ public class LogoutAction : MonoBehaviour
             {
                 Debug.LogError("Skibidi: No se ha iniciado sesion");
             }
-            /// POR HACER. CAMBIAR LAS COSAS PARA OBTENER LA PUNTUACION DEL JUEGO Y EL NIVEL PARA PASARLO AL PLAYER
-            player.UpdateScore(15151);
-            Debug.Log($"Sigma: {player.Nombre} --- {player.LastScore}");
             _logoutPlayer.DestroySession();
             SceneManager.LoadScene("Login");
         }

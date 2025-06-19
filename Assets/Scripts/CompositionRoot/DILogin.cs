@@ -15,6 +15,9 @@ public class DILogin : MonoInstaller
         Container.Bind<LoginPlayer>().AsTransient();
         Container.Bind<RegisterPlayer>().AsTransient();
         Container.Bind<LogoutPlayer>().AsTransient();
+        Container.Bind<IPlayerSessionProvider>()
+                .To<PlayerSessionProvider>()
+                .AsSingle();
     }
 
 }
