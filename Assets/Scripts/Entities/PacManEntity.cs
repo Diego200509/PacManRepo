@@ -20,11 +20,11 @@ public class PacManEntity
         CurrentNode = startNode;
         PreviousNode = null;
         Position = startNode.transform.position;
-        Direction = Vector2.left;
-        NextDirection = Vector2.left;
+        Direction = Vector2.zero;
+        NextDirection = Vector2.zero;
         Speed = startSpeed;
         CanMove = true;
-        TargetNode = GetInitialTargetNode(startNode, Direction);
+        TargetNode = null;
     }
 
     public void SetLevel(int level)

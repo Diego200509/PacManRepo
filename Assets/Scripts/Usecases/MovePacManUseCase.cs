@@ -15,7 +15,12 @@ public class MovePacManUseCase : IMovePacManUseCase
 
     public void Execute(PacManEntity pacman)
     {
-        if (!pacman.CanMove) return;
+        if (!pacman.CanMove)
+        {
+            pacman.Direction = Vector2.zero;
+            pacman.NextDirection = Vector2.zero;
+            return;
+        }
 
         // 1. Intentar cambio de dirección anticipado
         if (pacman.NextDirection != pacman.Direction)

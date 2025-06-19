@@ -34,22 +34,18 @@ public class PacManController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.RightArrow))
         {
             _entity.NextDirection = Vector2.right;
-            Debug.Log("→ PRESSED");
         }
         if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
             _entity.NextDirection = Vector2.left;
-            Debug.Log("← PRESSED");
         }
         if (Input.GetKeyDown(KeyCode.UpArrow))
         {
             _entity.NextDirection = Vector2.up;
-            Debug.Log("↑ PRESSED");
         }
         if (Input.GetKeyDown(KeyCode.DownArrow))
         {
             _entity.NextDirection = Vector2.down;
-            Debug.Log("↓ PRESSED");
         }
 
 
