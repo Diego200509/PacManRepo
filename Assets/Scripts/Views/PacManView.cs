@@ -128,28 +128,6 @@ public class PacManView : MonoBehaviour
         ShowIdle();
     }
 
-    /// <summary>
-    /// Llama desde tu PacManController tras mover la entidad,
-    /// para reflejar la dirección en la vista.
-    /// </summary>
-    public void UpdateOrientation(Vector2 dir)
-    {
-        orientation = dir;
-
-        if (dir == Vector2.left) transform.localScale = new Vector3(-1, 1, 1);
-        else if (dir == Vector2.right) transform.localScale = Vector3.one;
-        else if (dir == Vector2.up)
-        {
-            transform.localScale = Vector3.one;
-            transform.localRotation = Quaternion.Euler(0, 0, 90);
-        }
-        else if (dir == Vector2.down)
-        {
-            transform.localScale = Vector3.one;
-            transform.localRotation = Quaternion.Euler(0, 0, 270);
-        }
-    }
-
     //Para obtener la velocidad actual desde el View 
     public float GetCurrentSpeed()
     {

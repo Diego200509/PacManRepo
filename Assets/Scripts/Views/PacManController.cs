@@ -83,10 +83,12 @@ public class PacManController : MonoBehaviour
     void UpdateOrientation()
     {
         var dir = _entity.Direction;
-        if (dir == Vector2.left)
-            transform.localScale = new Vector3(-1, 1, 1);
-        else if (dir == Vector2.right)
-            transform.localScale = new Vector3(1, 1, 1);
+
+        transform.localScale = Vector3.one;
+        if (dir == Vector2.right)
+            transform.localRotation = Quaternion.Euler(0, 0, 0);
+        else if (dir == Vector2.left)
+            transform.localRotation = Quaternion.Euler(0, 0, 180);
         else if (dir == Vector2.up)
             transform.localRotation = Quaternion.Euler(0, 0, 90);
         else if (dir == Vector2.down)
