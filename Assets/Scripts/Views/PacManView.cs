@@ -46,12 +46,17 @@ public class PacManView : MonoBehaviour
     /// </summary>
     public void PlayChomp()
     {
+        if (_anim.runtimeAnimatorController != chompAnimation)
+        {
+            _anim.runtimeAnimatorController = chompAnimation;
+        }
+
+        if (!_anim.enabled)
+            _anim.enabled = true;
+
         var clip = _playedChomp1 ? chomp2 : chomp1;
         _playedChomp1 = !_playedChomp1;
         _audio.PlayOneShot(clip);
-
-        _anim.runtimeAnimatorController = chompAnimation;
-        _anim.enabled = true;
     }
 
     /// <summary>

@@ -1,12 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Zenject;
 
 public class ConsumePelletUseCase : IConsumePelletUseCase
 {
     private readonly IGameBoardGateway board;
     private readonly PacManView view;
 
+    [Inject]
     public ConsumePelletUseCase(IGameBoardGateway board, PacManView view)
     {
         this.board = board;
@@ -15,8 +17,8 @@ public class ConsumePelletUseCase : IConsumePelletUseCase
 
     public void Execute(Vector2 position)
     {
-        int x = Mathf.RoundToInt(position.x);
-        int y = Mathf.RoundToInt(position.y);
+        int x = Mathf.FloorToInt(position.x + 0.5f);
+        int y = Mathf.FloorToInt(position.y + 0.5f);
 
         GameObject tileObj = board.GetTileAt(x, y);
         if (tileObj == null) return;
@@ -59,7 +61,7 @@ public class ConsumePelletUseCase : IConsumePelletUseCase
                 var ghosts = GameObject.FindGameObjectsWithTag("Ghost");
                 foreach (var ghost in ghosts)
                 {
-                    ghost.GetComponent<GhostView>()?.StartFrightenedMode();
+                    ghost.GetComponent<GhostView>()?.SetFrightened(false);
                 }
             }
         }

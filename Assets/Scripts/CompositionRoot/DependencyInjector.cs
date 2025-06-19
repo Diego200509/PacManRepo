@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 
+
 public class DependencyInjector : MonoInstaller
 {
     [SerializeField] private GameBoardView gameBoardView;
@@ -31,11 +32,8 @@ public class DependencyInjector : MonoInstaller
 
         // Caso de uso para consumir pellets
         Container.Bind<IConsumePelletUseCase>()
-                 .To<ConsumePelletUseCase>()
-                 .AsTransient()
-                 .WithArguments(
-                    Container.Resolve<IGameBoardGateway>(),
-                    Container.Resolve<PacManView>()
-                 );
+         .To<ConsumePelletUseCase>()
+         .AsTransient();
+
     }
 }

@@ -1,4 +1,4 @@
-using System.Collections;
+Ôªøusing System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
@@ -12,7 +12,7 @@ public class PacManController : MonoBehaviour
 
     private bool _isReady = false;
 
-    // NUEVO: se aÒade consumePellet al mÈtodo de inicializaciÛn
+    // NUEVO: se a√±ade consumePellet al m√©todo de inicializaci√≥n
     public void Initialize(
         IMovePacManUseCase moveUseCase,
         PacManEntity entity,
@@ -30,28 +30,48 @@ public class PacManController : MonoBehaviour
     {
         if (!_isReady || _entity == null || !_entity.CanMove) return;
 
-        // 1) Leer input
-        _entity.NextDirection = new Vector2(
-            Input.GetAxisRaw("Horizontal"),
-            Input.GetAxisRaw("Vertical")
-        );
+        // 1) Leer input (presionado individualmente)
+        if (Input.GetKeyDown(KeyCode.RightArrow))
+        {
+            _entity.NextDirection = Vector2.right;
+            Debug.Log("‚Üí PRESSED");
+        }
+        if (Input.GetKeyDown(KeyCode.LeftArrow))
+        {
+            _entity.NextDirection = Vector2.left;
+            Debug.Log("‚Üê PRESSED");
+        }
+        if (Input.GetKeyDown(KeyCode.UpArrow))
+        {
+            _entity.NextDirection = Vector2.up;
+            Debug.Log("‚Üë PRESSED");
+        }
+        if (Input.GetKeyDown(KeyCode.DownArrow))
+        {
+            _entity.NextDirection = Vector2.down;
+            Debug.Log("‚Üì PRESSED");
+        }
 
-        // 2) Ejecutar lÛgica de movimiento
+
+        // 2) Ejecutar l√≥gica de movimiento
         _moveUseCase.Execute(_entity);
 
-        // 3) Consumir pellet si est· en uno
-        _consumePellet.Execute(_entity.Position); // NUEVO
+        // 3) Consumir pellet
+        _consumePellet.Execute(_entity.Position);
 
-        // 4) Actualizar posiciÛn visual
-        transform.localPosition = _entity.Position;
-
-        // 5) AnimaciÛn de boca
-        if (_entity.Direction == Vector2.zero)
-            _view.ShowIdle();
-        else
+        // 4) Actualizar posici√≥n visual SOLO si se est√° moviendo
+        if (transform.position != (Vector3)_entity.Position)
+        {
+            transform.position = _entity.Position;
+            Debug.Log($"Posici√≥n visual actualizada: {transform.position}");
             _view.PlayChomp();
+        }
+        else
+        {
+            _view.ShowIdle();
+        }
 
-        // 6) DirecciÛn visual
+        // 5) Orientaci√≥n
         UpdateOrientation();
     }
 
