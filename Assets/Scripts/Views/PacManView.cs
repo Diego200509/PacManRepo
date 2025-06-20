@@ -139,4 +139,17 @@ public class PacManView : MonoBehaviour
     {
         PlayChomp();
     }
+
+    public void IncreaseSpeedTemporarily(float amount, float duration)
+    {
+        speed += amount;
+        StartCoroutine(ResetSpeedAfterDelay(duration));
+    }
+
+    IEnumerator ResetSpeedAfterDelay(float duration)
+    {
+        yield return new WaitForSeconds(duration);
+        SetDifficultyForLevel(GameBoardView.playerOneLevel);
+    }
+
 }

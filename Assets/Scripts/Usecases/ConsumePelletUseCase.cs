@@ -53,13 +53,22 @@ public class ConsumePelletUseCase : IConsumePelletUseCase
         {
             tileObj.GetComponent<SpriteRenderer>().enabled = false;
             view.OnPelletConsumed(); // Animación visual u otros efectos
+            view.IncreaseSpeedTemporarily(2f, 1.5f); // por ejemplo
 
             if (tile.isSuperPellet)
             {
                 var ghosts = GameObject.FindGameObjectsWithTag("Ghost");
                 foreach (var ghost in ghosts)
                 {
-                    ghost.GetComponent<GhostView>()?.SetFrightened(false);
+                    var entity = ghost.GetComponent<GhostController>()?.GetEntity();
+                    if (entity != null && entity.CurrentMode != GhostMode.Consumed)
+                    {
+                        entity.PreviousMode = entity.CurrentMode;
+                        entity.CurrentMode = GhostMode.Frightened;
+                        entity.FrightenedTimer = 0f;
+
+                        ghost.GetComponent<GhostView>()?.StartFrightenedMode();
+                    }
                 }
             }
         }

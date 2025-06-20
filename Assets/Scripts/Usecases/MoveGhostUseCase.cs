@@ -40,7 +40,7 @@ public class MoveGhostUseCase : IMoveGhostUseCase
         {
             g.Position += g.Direction * g.Speed * Time.deltaTime;
 
-            if (Overshot(g))
+            if (Overshot(g) && g.TargetNode != null)
             {
                 g.CurrentNode = g.TargetNode;
                 g.Position = g.CurrentNode.transform.position;
@@ -50,9 +50,26 @@ public class MoveGhostUseCase : IMoveGhostUseCase
 
     void UpdateModeTimers(GhostEntity g)
     {
-        if (g.CurrentMode != GhostMode.Frightened)
+        if (g.CurrentMode == GhostMode.Frightened)
         {
-            // Modo Scatter / Chase normal
+            g.FrightenedTimer += Time.deltaTime;
+            g.Speed = g.NormalSpeed * 0.5f; // Reduce velocidad en modo frightened
+
+            if (g.FrightenedTimer >= g.FrightenedDuration)
+            {
+                g.CurrentMode = g.PreviousMode;
+                g.FrightenedTimer = 0f;
+                g.ModeTimer = 0f;
+                g.Speed = g.NormalSpeed; // Restaura velocidad al salir
+            }
+        }
+        else if (g.CurrentMode == GhostMode.Consumed)
+        {
+            g.Speed = g.NormalSpeed * 2f; // Velocidad aumentada en modo consumido
+        }
+        else
+        {
+            g.Speed = g.NormalSpeed; // Velocidad normal en modos Scatter y Chase
             g.ModeTimer += Time.deltaTime;
 
             switch (g.ModeChangeIteration)
@@ -108,20 +125,6 @@ public class MoveGhostUseCase : IMoveGhostUseCase
                     break;
             }
         }
-        else
-        {
-            // Modo Frightened
-            g.FrightenedTimer += Time.deltaTime;
-
-            if (g.FrightenedTimer >= g.FrightenedDuration)
-            {
-                // regresa al modo anterior
-                g.CurrentMode = g.PreviousMode;
-                g.FrightenedTimer = 0f;
-                g.ModeTimer = 0f;
-            }
-            // (Aquí podrías copiar tu lógica de parpadeo, cambiando animador entre ghostBlue/ghostWhite)
-        }
     }
 
     Vector2 ChooseTargetTile(GhostEntity g, Vector2 pmPos, Vector2 pmDir)
@@ -132,41 +135,19 @@ public class MoveGhostUseCase : IMoveGhostUseCase
                 switch (g.Type)
                 {
                     case GhostType.Red:
-                        return new Vector2(
-                            Mathf.RoundToInt(pmPos.x),
-                            Mathf.RoundToInt(pmPos.y)
-                        );
-
+                        return new Vector2(Mathf.RoundToInt(pmPos.x), Mathf.RoundToInt(pmPos.y));
                     case GhostType.Pink:
-                        // 4 tiles adelante de Pac-Man
-                        var baseTile = new Vector2(
-                            Mathf.RoundToInt(pmPos.x),
-                            Mathf.RoundToInt(pmPos.y)
-                        );
-                        return baseTile + pmDir * 4f;
-
+                        return new Vector2(Mathf.RoundToInt(pmPos.x), Mathf.RoundToInt(pmPos.y)) + pmDir * 4f;
                     case GhostType.Blue:
-                        // Calcula el tile de dos adelante y luego vector desde Blinky, etc.
-                        var ahead = new Vector2(
-                            Mathf.RoundToInt(pmPos.x),
-                            Mathf.RoundToInt(pmPos.y)
-                        ) + pmDir * 2f;
+                        var ahead = new Vector2(Mathf.RoundToInt(pmPos.x), Mathf.RoundToInt(pmPos.y)) + pmDir * 2f;
                         var blinkyPos = GameObject.Find("Ghost_Blinky").transform.localPosition;
-                        var blinkyTile = new Vector2(
-                            Mathf.RoundToInt(blinkyPos.x),
-                            Mathf.RoundToInt(blinkyPos.y)
-                        );
+                        var blinkyTile = new Vector2(Mathf.RoundToInt(blinkyPos.x), Mathf.RoundToInt(blinkyPos.y));
                         var v = ahead - blinkyTile;
                         return blinkyTile + v * 2f;
-
                     case GhostType.Orange:
-                        // si distancia < 8 → scatter (home), sino → target Pac-Man
                         var dist = Vector2.Distance(g.Position, pmPos);
                         if (dist > 8f)
-                            return new Vector2(
-                                Mathf.RoundToInt(pmPos.x),
-                                Mathf.RoundToInt(pmPos.y)
-                            );
+                            return new Vector2(Mathf.RoundToInt(pmPos.x), Mathf.RoundToInt(pmPos.y));
                         else
                             return g.HomeNode.transform.position;
                 }
@@ -176,10 +157,7 @@ public class MoveGhostUseCase : IMoveGhostUseCase
                 return g.HomeNode.transform.position;
 
             case GhostMode.Frightened:
-                return new Vector2(
-                    Random.Range(0, _board.Width),
-                    Random.Range(0, _board.Height)
-                );
+                return new Vector2(Random.Range(0, _board.Width), Random.Range(0, _board.Height));
 
             case GhostMode.Consumed:
                 return g.GhostHouse.transform.position;
@@ -190,8 +168,7 @@ public class MoveGhostUseCase : IMoveGhostUseCase
 
     Node CanMove(Node from, Vector2 dir, GhostEntity g, Vector2 targetTile)
     {
-        // recolecta opciones sin retroceder
-        var list = new System.Collections.Generic.List<(Node node, Vector2 d)>();
+        var list = new List<(Node node, Vector2 d)>();
         for (int i = 0; i < from.neighbors.Length; i++)
         {
             var d = from.validDirections[i];
@@ -199,22 +176,17 @@ public class MoveGhostUseCase : IMoveGhostUseCase
             list.Add((from.neighbors[i], d));
         }
 
-        // si solo hay uno
         if (list.Count == 1)
         {
             g.Direction = list[0].d;
             return list[0].node;
         }
 
-        // si hay varias, elige la que minimice la distancia a targetTile
         float best = float.MaxValue;
         Node pick = null;
         foreach (var (node, d) in list)
         {
-            float dist = Vector2.Distance(
-                node.transform.position,
-                targetTile
-            );
+            float dist = Vector2.Distance(node.transform.position, targetTile);
             if (dist < best)
             {
                 best = dist;
@@ -227,7 +199,6 @@ public class MoveGhostUseCase : IMoveGhostUseCase
 
     bool Overshot(GhostEntity g)
     {
-        // convertimos los Vector3 a Vector2 para restar con g.Position
         Vector2 prev = g.PreviousNode.transform.position;
         Vector2 targ = g.TargetNode.transform.position;
         Vector2 pos = g.Position;

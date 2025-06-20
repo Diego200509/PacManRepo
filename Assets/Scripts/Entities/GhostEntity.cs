@@ -19,6 +19,8 @@ public class GhostEntity
     // --- Configuración de velocidad y movimiento ---
     public float Speed { get; set; }
     public bool CanMove { get; set; }
+    public float NormalSpeed { get; set; }
+
 
     // --- Modo y temporizadores de cambio de modo ---
     public GhostMode CurrentMode { get; set; }
@@ -83,6 +85,7 @@ public class GhostEntity
         // movimiento
         Speed = startSpeed;
         CanMove = true;
+        NormalSpeed = startSpeed;
 
         // modos y timers
         CurrentMode = GhostMode.Scatter;
@@ -113,4 +116,16 @@ public class GhostEntity
 
         Type = type;
     }
+    public void ResetToStart()
+    {
+        CurrentNode = PreviousNode = TargetNode = null;
+        Position = Vector2.zero;
+        Direction = Vector2.left;
+        NextDirection = Vector2.left;
+        ModeTimer = FrightenedTimer = ReleaseTimer = 0f;
+        ModeChangeIteration = 1;
+        CurrentMode = GhostMode.Scatter;
+        CanMove = true;
+    }
+
 }

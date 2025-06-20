@@ -1,21 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Zenject;
 
 [RequireComponent(
-        typeof(SpriteRenderer),
-        typeof(Animator),
-        typeof(GhostView)    
-    )]
+    typeof(SpriteRenderer),
+    typeof(Animator),
+    typeof(GhostView)
+)]
 public class GhostController : MonoBehaviour
 {
-    [Inject] readonly IMoveGhostUseCase _moveUseCase;
-    [Inject] readonly GhostEntity _entity;
+    private IMoveGhostUseCase _moveUseCase;
+    private GhostEntity _entity;
 
-    GhostView _view;
-    Transform _t;
-    PacManView _pacView;
+    private GhostView _view;
+    private Transform _t;
+    private PacManView _pacView;
 
     void Awake()
     {
@@ -30,7 +29,7 @@ public class GhostController : MonoBehaviour
 
     void Update()
     {
-        if (!_entity.CanMove) return;
+        if (_entity == null || !_entity.CanMove) return;
 
         // 1) Obtenemos posición y dirección de Pac-Man desde su View
         Vector2 pmPos = Vector2.zero;
@@ -57,21 +56,29 @@ public class GhostController : MonoBehaviour
         {
             case GhostMode.Scatter:
             case GhostMode.Chase:
-                // En scatter o chase usamos la animación según la dirección
                 _view.SetScatterOrChase(_entity.Direction);
                 break;
 
             case GhostMode.Frightened:
-                // Alternar azul/blanco al parpadear
                 bool white = _entity.FrightenedTimer >= _entity.StartBlinkingAt
                              && ((int)(_entity.FrightenedTimer * 10) % 2 == 0);
                 _view.SetFrightened(white);
                 break;
 
             case GhostMode.Consumed:
-                // Mostrar sólo los ojos apuntando en la dirección
                 _view.SetConsumedEyes(_entity.Direction);
                 break;
         }
+    }
+
+    public void Initialize(IMoveGhostUseCase moveUseCase, GhostEntity entity)
+    {
+        _moveUseCase = moveUseCase;
+        _entity = entity;
+    }
+
+    public GhostEntity GetEntity()
+    {
+        return _entity;
     }
 }

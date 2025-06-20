@@ -35,5 +35,7 @@ public class DependencyInjector : MonoInstaller
          .To<ConsumePelletUseCase>()
          .AsTransient();
 
+        Container.Bind<IMoveGhostUseCase>().To<MoveGhostUseCase>().AsTransient();
+
     }
 }
