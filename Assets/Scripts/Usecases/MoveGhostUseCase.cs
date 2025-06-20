@@ -15,6 +15,24 @@ public class MoveGhostUseCase : IMoveGhostUseCase
     {
         if (!g.CanMove) return;
 
+        // Reglas de salida de la casa
+        if (g.IsInGhostHouse)
+        {
+            g.ReleaseTimer += Time.deltaTime;
+
+            bool canRelease = (g.Type == GhostType.Pink && g.ReleaseTimer > g.PinkyReleaseTimer)
+                           || (g.Type == GhostType.Blue && g.ReleaseTimer > g.InkyReleaseTimer)
+                           || (g.Type == GhostType.Orange && g.ReleaseTimer > g.ClydeReleaseTimer)
+                           || (g.Type == GhostType.Red); // Blinky siempre sale primero
+
+            if (!canRelease)
+                return;
+
+            g.IsInGhostHouse = false;
+            Debug.Log($"{g.Type} liberado!");
+        }
+
+
         // 1) Actualizar timers y modos
         UpdateModeTimers(g);
 
@@ -44,6 +62,18 @@ public class MoveGhostUseCase : IMoveGhostUseCase
             {
                 g.CurrentNode = g.TargetNode;
                 g.Position = g.CurrentNode.transform.position;
+
+                // Salir del modo Consumed al llegar a la casa
+                if (g.CurrentMode == GhostMode.Consumed &&
+            Vector2.Distance(g.Position, g.GhostHouse.transform.position) < 0.1f)
+                {
+                    g.CurrentMode = GhostMode.Scatter;
+                    g.PreviousMode = GhostMode.Scatter;
+                    g.Speed = g.NormalSpeed;
+                    g.IsInGhostHouse = false;
+
+                    Debug.Log($"{g.Type} ha llegado a la casa y regresa a Scatter.");
+                }
             }
         }
     }

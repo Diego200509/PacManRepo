@@ -38,10 +38,7 @@ public class MovePacManUseCase : IMovePacManUseCase
         // 2. Avanzar nodo a nodo
         if (pacman.TargetNode != null && pacman.CurrentNode != pacman.TargetNode)
         {
-            Debug.Log($"Current: {pacman.CurrentNode?.transform.position}, Target: {pacman.TargetNode?.transform.position}, Prev: {pacman.PreviousNode?.transform.position}");
-            Debug.Log($"Moviendo hacia nodo en: {pacman.TargetNode.transform.position}");
             pacman.Position += pacman.Direction * pacman.Speed * Time.deltaTime;
-            Debug.Log($"Posición actual: {pacman.Position} - Velocidad: {pacman.Speed}");
 
             if (HasOverShotTarget(pacman))
             {
@@ -77,7 +74,6 @@ public class MovePacManUseCase : IMovePacManUseCase
 
                 if (next != null)
                 {
-                    Debug.Log($"Nuevo target encontrado: {next.transform.position}");
                     pacman.PreviousNode = pacman.CurrentNode;
                     pacman.TargetNode = next;
                     pacman.Direction = (next.transform.position - pacman.CurrentNode.transform.position).normalized;
@@ -85,13 +81,10 @@ public class MovePacManUseCase : IMovePacManUseCase
                 }
                 else
                 {
-                    Debug.Log("Sin target válido en la dirección actual.");
                     pacman.Direction = Vector2.zero;
                     pacman.TargetNode = null;
                     pacman.Position = pacman.CurrentNode.transform.position;
                 }
-
-                Debug.Log("Nodo alcanzado y actualizado.");
             }
         }
 
@@ -126,14 +119,12 @@ public class MovePacManUseCase : IMovePacManUseCase
     private bool HasOverShotTarget(PacManEntity pacman)
     {
         if (pacman.TargetNode == null || pacman.PreviousNode == null) {
-            Debug.Log("Overshot alcanzado. Posición ajustada al nodo destino.");
             return false;
         }
            
 
         Vector2 fromPrevToTarget = (Vector2)pacman.TargetNode.transform.position - (Vector2)pacman.PreviousNode.transform.position;
         Vector2 fromPrevToNow = pacman.Position - (Vector2)pacman.PreviousNode.transform.position;
-        Debug.Log($"fromPrevToNow: {fromPrevToNow.sqrMagnitude}, fromPrevToTarget: {fromPrevToTarget.sqrMagnitude}");
 
         return fromPrevToNow.sqrMagnitude >= fromPrevToTarget.sqrMagnitude - 0.01f; // margen
     }

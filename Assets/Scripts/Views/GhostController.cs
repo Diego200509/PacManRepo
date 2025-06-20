@@ -38,6 +38,7 @@ public class GhostController : MonoBehaviour
         {
             pmPos = _pacView.transform.localPosition;
             pmDir = _pacView.orientation;
+            Debug.Log($"PacMan Dir: {pmDir}, Pos: {pmPos}");
         }
 
         // 2) Ejecutamos la lógica de movimiento
@@ -45,6 +46,8 @@ public class GhostController : MonoBehaviour
 
         // 3) Aplicamos la nueva posición al Transform
         _t.localPosition = _entity.Position;
+
+        Debug.Log($"{_entity.Type} - Mode: {_entity.CurrentMode} - Pos: {_entity.Position}");
 
         // 4) Actualizamos sprites y animaciones
         ApplyVisuals();
