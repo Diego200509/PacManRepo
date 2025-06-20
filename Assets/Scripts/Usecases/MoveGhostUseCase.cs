@@ -80,6 +80,9 @@ public class MoveGhostUseCase : IMoveGhostUseCase
 
     void UpdateModeTimers(GhostEntity g)
     {
+        if (g.CurrentMode == GhostMode.Consumed)
+            return;
+
         if (g.CurrentMode == GhostMode.Frightened)
         {
             g.FrightenedTimer += Time.deltaTime;
