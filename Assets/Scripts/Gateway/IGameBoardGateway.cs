@@ -12,4 +12,6 @@ public interface IGameBoardGateway
 
     GameObject GetTileAt(int x, int y);
     void SetTileAt(int x, int y, GameObject obj);
+
+    void StartDeath();
 }

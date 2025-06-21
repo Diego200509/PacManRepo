@@ -24,12 +24,39 @@ public class MoveGhostUseCase : IMoveGhostUseCase
                            || (g.Type == GhostType.Blue && g.ReleaseTimer > g.InkyReleaseTimer)
                            || (g.Type == GhostType.Orange && g.ReleaseTimer > g.ClydeReleaseTimer)
                            || (g.Type == GhostType.Red); // Blinky siempre sale primero
+            Debug.Log($"{g.Type} - canRelease: {canRelease}, timer: {g.ReleaseTimer}");
+
+            if (g.Type == GhostType.Blue)
+            {
+                Debug.Log($"[DEBUG] Inky Release Timer: {g.ReleaseTimer} / {g.InkyReleaseTimer}");
+            }
+
+            if (g.Type == GhostType.Blue)
+                canRelease = true;
+
 
             if (!canRelease)
+            {
+                Debug.Log($"{g.Type} aún NO puede salir. Timer actual: {g.ReleaseTimer}");
                 return;
+            }
 
             g.IsInGhostHouse = false;
-            Debug.Log($"{g.Type} liberado!");
+            Debug.Log($"{g.Type} liberado");
+
+            var exitNode = g.CurrentNode?.GetNeighborInDirection(Vector2.left);
+            if (exitNode == null)
+            {
+                Debug.LogWarning($"{g.Type} no tiene salida hacia arriba desde {g.CurrentNode.transform.position}");
+            }
+
+            if (exitNode != null)
+            {
+                g.PreviousNode = g.CurrentNode;
+                g.TargetNode = exitNode;
+                g.CurrentNode = null;
+                g.Direction = Vector2.up;
+            }
         }
 
 

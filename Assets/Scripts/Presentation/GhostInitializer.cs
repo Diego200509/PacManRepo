@@ -7,7 +7,13 @@ public class GhostInitializer : MonoBehaviour
 {
     [Inject] private IGameBoardGateway _board;
     [Inject] private IMoveGhostUseCase _moveGhostUseCase;
+    [Inject] private ICheckCollisionUseCase _collisionUseCase;
     [Inject] private DiContainer _container;
+    private PacManEntity _pacEntity;
+    public void SetPacManEntity(PacManEntity entity)
+    {
+        _pacEntity = entity;
+    }
 
     void Start()
     {
@@ -17,6 +23,8 @@ public class GhostInitializer : MonoBehaviour
     IEnumerator InitializeGhosts()
     {
         yield return null;
+
+        yield return new WaitForSeconds(3f);
 
         var ghosts = GameObject.FindGameObjectsWithTag("Ghost");
 
@@ -45,6 +53,7 @@ public class GhostInitializer : MonoBehaviour
             GhostType type = GhostType.Red;
             Node home = node;
             Node house = node;
+            Debug.Log($"Ghost {ghostGO.name} house node: {house?.name}");
 
             if (ghostGO.name.Contains("Pinky")) type = GhostType.Pink;
             else if (ghostGO.name.Contains("Inky")) type = GhostType.Blue;
@@ -86,9 +95,14 @@ public class GhostInitializer : MonoBehaviour
             _container.Inject(controller);
             _container.Bind<GhostEntity>().FromInstance(entity).AsTransient();
             controller.GetType().GetField("_entity", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)?.SetValue(controller, entity);
-            controller.Initialize(_moveGhostUseCase, entity);
+            controller.Initialize(
+                _moveGhostUseCase,
+                entity,
+                _pacEntity,
+                _collisionUseCase,
+                _board
+            );
 
-            Debug.Log($"{ghostGO.name} inicializado con modo {entity.CurrentMode} y dirección {entity.Direction}");
         }
 
         Debug.Log("Todos los fantasmas inicializados correctamente");

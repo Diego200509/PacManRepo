@@ -10,6 +10,9 @@ using UnityEngine;
 public class GhostController : MonoBehaviour
 {
     private IMoveGhostUseCase _moveUseCase;
+    private ICheckCollisionUseCase _collisionUseCase;
+    private IGameBoardGateway _gameBoard;
+    private PacManEntity _pacEntity;
     private GhostEntity _entity;
 
     private GhostView _view;
@@ -38,7 +41,6 @@ public class GhostController : MonoBehaviour
         {
             pmPos = _pacView.transform.localPosition;
             pmDir = _pacView.orientation;
-            Debug.Log($"PacMan Dir: {pmDir}, Pos: {pmPos}");
         }
 
         // 2) Ejecutamos la lógica de movimiento
@@ -47,10 +49,12 @@ public class GhostController : MonoBehaviour
         // 3) Aplicamos la nueva posición al Transform
         _t.localPosition = _entity.Position;
 
-        Debug.Log($"{_entity.Type} - Mode: {_entity.CurrentMode} - Pos: {_entity.Position}");
-
         // 4) Actualizamos sprites y animaciones
         ApplyVisuals();
+
+        // 5) Actualizamos posición en entidad y verificamos colisión
+        _entity.Position = _t.localPosition;
+        _collisionUseCase.Execute(_pacEntity, _entity, _gameBoard);
     }
 
     void ApplyVisuals()
@@ -74,10 +78,18 @@ public class GhostController : MonoBehaviour
         }
     }
 
-    public void Initialize(IMoveGhostUseCase moveUseCase, GhostEntity entity)
+    public void Initialize(
+       IMoveGhostUseCase moveUseCase,
+       GhostEntity entity,
+       PacManEntity pacEntity,
+       ICheckCollisionUseCase collisionUseCase,
+       IGameBoardGateway gameBoard)
     {
         _moveUseCase = moveUseCase;
         _entity = entity;
+        _pacEntity = pacEntity;
+        _collisionUseCase = collisionUseCase;
+        _gameBoard = gameBoard;
     }
 
     public GhostEntity GetEntity()

@@ -37,5 +37,9 @@ public class DependencyInjector : MonoInstaller
 
         Container.Bind<IMoveGhostUseCase>().To<MoveGhostUseCase>().AsTransient();
 
+        Container.Bind<ICheckCollisionUseCase>()
+        .To<CheckCollisionUseCase>()
+        .AsTransient();
+
     }
 }

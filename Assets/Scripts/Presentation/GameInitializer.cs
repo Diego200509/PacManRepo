@@ -81,6 +81,13 @@ public class GameInitializer : MonoBehaviour
             Debug.LogError("PacManController no encontrado en el GameObject de PacManView.");
         }
 
+        // Inyección manual de PacManEntity en GhostInitializer
+        var ghostInitializer = FindObjectOfType<GhostInitializer>();
+        if (ghostInitializer != null)
+        {
+            ghostInitializer.SetPacManEntity(entity);
+        }
+
         Debug.Log("PacManEntity creado y registrado correctamente.");
     }
 

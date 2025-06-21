@@ -15,6 +15,8 @@ public class GhostEntity
     public Node CurrentNode { get; set; }
     public Node PreviousNode { get; set; }
     public Node TargetNode { get; set; }
+    public Vector2 Size { get; set; } = new Vector2(1, 1);
+    public GhostMode Mode => CurrentMode;
 
     // --- Configuración de velocidad y movimiento ---
     public float Speed { get; set; }
@@ -126,6 +128,11 @@ public class GhostEntity
         ModeChangeIteration = 1;
         CurrentMode = GhostMode.Scatter;
         CanMove = true;
+    }
+
+    public void Consume()
+    {
+        CurrentMode = GhostMode.Consumed;
     }
 
 }

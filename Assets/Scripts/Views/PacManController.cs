@@ -59,7 +59,6 @@ public class PacManController : MonoBehaviour
         if (transform.position != (Vector3)_entity.Position)
         {
             transform.position = _entity.Position;
-            Debug.Log($"PacMan Dir: {_entity.Direction}, Pos: {_entity.Position}");
 
             if (atePellet)
                 _view.PlayChomp();
